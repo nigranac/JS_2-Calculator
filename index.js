@@ -42,5 +42,5 @@ var numbers = document.querySelectorAll(".num");
           }
         }, false);
 
-var numbers=failedse
+var numbers=failedses
 
