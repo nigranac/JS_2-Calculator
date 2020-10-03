@@ -1,79 +1,104 @@
-// Change The Colors!
-
-const colors = [
-  {
-    name: "red",
-    motto: "Rose Red",
-  },
-  {
-    name: "blue",
-    motto: "Ocean Blue",
-  },
-  {
-    name: "gray",
-    motto: "Smoke Gray",
-  },
-  {
-    name: "green",
-    motto: "Grass Green",
-  },
-  {
-    name: "purple",
-    motto: "Deep Purple",
-  },
+// Algoritma:
+//1. Random gelen Colorlar için bir liste oluşturulacak.
+//2.SetColorButton, RandomColorButton ve colorInput tanımlanacak.
+//3. 2 adet fonksiyon tanımlanacak.(setColor/ChangeColor)
+const colors = [{
+  name: "Maroon",
+  motto: "Happiness",
+},
+{
+  name: "Yellow",
+  motto: "Sun",
+},
+{
+  name: "Olive",
+  motto: "GreenMode",
+},
+{
+  name: "Lime",
+  motto: "Vitality",
+},
+{
+  name: "Black",
+  motto: "Power",
+},
 ];
-
+const setColorButton = document.querySelector("#setColorButton");
 const randomColorButton = document.querySelector("#randomColorButton");
-const addColorButton = document.querySelector("#setColorButton");
+const colorInput = document.querySelector(".colorInput");
+const colorName = document.querySelector("#colorName");
+const colorDesc = document.querySelector("#colorDesc");
+const hexInput = document.querySelector(".hexInput");
+randomColorButton.addEventListener("click", changeColor);
+setColorButton.addEventListener("click", setColor);
 
-addColorButton.addEventListener("click", addColor);
-randomColorButton.addEventListener("click", changeColors);
-// randomColorButton.addEventListener("click", () => changeColors());
-// randomColorButton.addEventListener("click", function () {
-//   changeColors();
-// });
 
-// 1) Arrayden rastgele element seçmek
-function changeColors() {
-  const randomIndex = Math.floor(Math.random() * colors.length);
-
-  document.querySelector("#colorName").textContent = colors[randomIndex].name;
-  document.querySelector("#colorDesc").textContent = colors[randomIndex].motto;
-
-  document.querySelector("body").style.backgroundColor =
-    colors[randomIndex].name;
+function isColor(strColor) {
+var s = new Option().style;
+s.color = strColor;
+return s.color != strColor;
 }
 
-// 2) Kullanıcının girdiği string'i renk listesine eklemek ve arkaplanı o renk ile güncellemek
-function addColor() {
-  const userInput = document.querySelector(".colorInput");
+function checkHex(hex) {
+return /^#[0-9A-F]{6}$/i.test(hex)
+}
 
-  const colorData = userInput.value.split(":");
+function changeColor() {
+const colorIndex = Math.floor(Math.random() * colors.length); //3-2-0
+document.body.style.backgroundColor = colors[colorIndex].name;
+colorName.innerText = colors[colorIndex].name;
+colorDesc.innerText = colors[colorIndex].motto;
+}
 
-  const colorObject = {
-    name: colorData[0],
-    motto: colorData[1],
+function setColor() {
+
+if (colorInput.value === "" && hexInput.value === "") {
+  alert("Please enter a color");
+} else {
+  let newColor = {
+    name: colorInput.value.split(":")[0],
+    motto: colorInput.value.split(":")[1],
   };
 
-  // indexOf SADECE flat array (["red", "blue"] / [1, 2, 3]) geçerlidir.
-  // findIndex object arraylerde geçerlidir.
-  const searchedColorIndex = colors.findIndex(
-    (myColor) => myColor.name === colorObject.name
-  );
-  if (searchedColorIndex === -1) {
-    document.querySelector("body").style.backgroundColor = colorObject.name;
-    document.querySelector("#colorName").textContent = colorObject.name;
-    document.querySelector("#colorDesc").textContent = colorObject.motto;
+  let hexColor = {
+    name: hexInput.value.split(":")[0],
+    motto: hexInput.value.split(":")[1],
+  };
 
-    colors.push(colorObject);
-    userInput.value = "";
-    userInput.focus();
+  if (!checkHex(hexColor.name) && colorInput.value === "") {
+    alert("Please enter a valid hex color")
+  } else if (isColor(newColor.name) && hexInput.value === "") {
+    alert("Please enter a valid color")
   } else {
-    alert("Renk zaten mevcut!");
+    if (newColor.motto == undefined && hexColor.motto == undefined) {
+      alert("Please enter a correct format (name:motto)");
+    } else if (hexColor.motto == undefined && newColor.motto != undefined) {
+      if (colors.some((color) => color.name === newColor.name) === false) {
+        // (colors.findIndex((color) => color.name === newColor.name) === -1)
+        colors.push(newColor);
+        console.log(colors);
+        document.body.style.backgroundColor = newColor.name;
+        colorName.innerText = newColor.name;
+        colorDesc.innerText = newColor.motto;
+        colorInput.focus();
+        colorInput.value = "";
+      } else {
+        alert("This color exists in your list");
+      }
+    } else if (hexColor.motto != undefined && newColor.motto == undefined) {
+      if (colors.some((color) => color.name === hexColor.name) === false) {
+        // (colors.findIndex((color) => color.name === newColor.name) === -1)
+        colors.push(hexColor);
+        console.log(colors);
+        document.body.style.backgroundColor = hexColor.name;
+        colorName.innerText = hexColor.name;
+        colorDesc.innerText = hexColor.motto;
+        hexInput.focus();
+        hexInput.value= "";
+      } else {
+        alert("This color exists in your list");
+      }
+    }
   }
 }
-
-// Kullanıcı boş bir değer girerse?
-// Kullanıcı geçersiz bir değer girerse?
-
-// Bir input daha ekleyin: kullanıcıdan hex'a değer #eceff1?
+}
